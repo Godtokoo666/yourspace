@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <div id="main-full">
+        <div class="box">
+            <div style="display: flex;justify-content: center;">
+                <div class="cell" style="flex-direction: column;width:100%;">
+                    <h1 style="text-align:center;">{{ title }}</h1>
+                    <p>{{ message }}</p>
+                </div>
+            </div>
+            <div class="sep10"></div>
+            <li class="cell" style="justify-content: center;">
+                <form action="{{ action }}" method="post" style="display: inline-block;">
+                    {{ form.hidden_tag() }}
+                    <input type="submit" value="Yes" style="margin-right:50px">
+                    <button type="button" class = "btn-normal" onclick="window.history.back()">No</button>
+                    <div class="sep10"></div>
+                </form>
+            </li>
+            <div class="sep10"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

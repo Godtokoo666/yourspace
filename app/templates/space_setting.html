@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <div id="main-full">
+        <div class="box">
+            <div class="flex-one-row">
+                <h1>空间设置</h1>
+            </div>
+            <form method="post" action={{ url_for('main.space_setting',uid=g.user.uid) }}>
+                {{ form.hidden_tag() }}
+                <label for="bio">个人简介:</label>
+                <div class="sep10"></div>
+                {{ form.bio(style="width:80%", maxlength="200", id="editor" ,placeholder="请输入个人简介，支持Markdown语法") }}
+                <div class="sep20"></div>
+                <label for="avatar">头像URL:</label>
+                <div class="sep10"></div>
+                {{ form.avatar(style="", id="node-select") }}
+                <div class="sep20"></div>
+                <input type="submit" value="更新空间设置" style="" >
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

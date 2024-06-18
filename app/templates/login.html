@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="sep20"></div>
+<div class="login-container">
+    <h2>登录</h2>
+    <form method="POST">
+        <label for="username">用户名或邮箱:</label>
+        <input type="text" id="usernameORemail" name="usernameORemail" required><br><br>
+        
+        <label for="password">密码:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        
+        <input type="submit" value="Login">
+    </form>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+<div class="sep20"></div>
+{% endblock %}

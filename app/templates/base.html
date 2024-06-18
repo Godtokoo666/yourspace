@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ title }} - {{ g.site_name }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/markdown-it.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div id="Top">
+        <div class="content">
+            <div class="Top-left">
+                <a href="/" name="top" title="YourSpace">
+                    <div id="Logo">YourSpace</div>
+                </a>
+                <div id="search-container" class="active">
+                    <input id="search" type="text" maxlength="128" autocomplete="off" tabindex="1">
+                    <div id="search-result" class="box" style="display: none;"> </div>
+                </div>
+                <div class="tools">
+                    <a href="/" class="top">首页</a>
+                    <a href="/node" class="top">节点</a>
+                    {% if g.user.has_priv('PRIV_USER') %}
+                    <div class="dropdown">
+                        <button id="userBtn" class="dropbtn">{{ g.user.username }} </button>
+                        <div id="dropdownContent" class="dropdown-content">
+                            <a href="/space/{{ g.user.uid }}"target="blank">个人空间</a>
+                            {% if g.user.has_priv('PRIV_ADMIN')%}
+                            <a href="/admin">管理后台</a>
+                            {% endif %}
+                            <a href="/logout">退出登录</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="/login" class="top">登录</a>
+                    <a href="/register" class="top">注册</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="Wrapper">
+    <div class="sep20"></div>
+    {% block content %}
+    {% endblock %}
+    <div class="sep20"></div>
+    </div>
+    <div id="Bottom">
+        <footer class="footer">
+            <p style="text-align: center">&copy; {{ g.current_year }} YourSpace. All rights reserved.</p>
+        </footer>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>console.log("加入我们：github.com/your-space")</script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

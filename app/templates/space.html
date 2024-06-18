@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <div id="main-full">
+        <div class="box">
+            <div class="cell flex-one-row">
+                <h2>{{ space.username }} 的个人空间</h2>
+                {% if g.user and g.user.uid == space.uid %}
+                    <span style="margin-left:auto">
+                        <a href="/space/{{ space.uid }}/setting">空间设置</a>
+                    </span>
+                {% endif %}
+            </div>
+            <div class="sep20"></div>
+            <div class="sep20"></div>
+            <div style="display:flex; margin:0 auto;">
+            <div style="flex: 0 0 25%;">
+                <img src="{{ space.avatar }}" class="avatar" border="0" align="default" width="48" style="width: 80px; max-height: 80px;" alt={{ space.username }}>
+                <br>
+                <span class="topic_info" style="font-size:20px">
+                <strong>{{ space.username }}</strong>
+                <br>
+                <strong>注册于 {{ space.created_at }}</strong>
+                </span>
+            </div>
+            <div style="width:1px; background-color:#e2e2e2; margin:0 20px;"></div>
+            <div style="flex: 0 0 60%;">
+                <h2>个人简介</h2>
+                <div class="markdown-body" style="padding: 10px; padding-left: 0;">
+                    {% if space.bio %}
+                        {{ space.bio }}
+                    {% else %}
+                        这家伙很懒，什么也没留下。
+                    {% endif %}
+                </div>
+            </div>
+            </div>
+            <div class="sep20"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+
+<div id="back">
+<span>评论</span>
+<form method="post" action={{ url_for('main.post_detial',pid=post.pid)}}>
+    {{ form.hidden_tag() }}
+    {{form.cid(type="hidden")}}
+    <div class="sep10"></div>
+    <div class="cell">
+        {{ form.content(style="", maxlength="20000", id="editor" ,placeholder="请输入评论，支持Markdown语法") }}
+    </div>
+    <div style="padding: 10px; padding-left: 0;">
+        <input type="submit" value="编辑/发布评论" >
+    </div>
+</form>
+</div>

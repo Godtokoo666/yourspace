@@ -1,0 +1,18 @@
+<div class="box">
+        {% if g.user.has_priv('PRIV_USER') %}
+        <div class="cell">
+            <img src="{{ g.user.avatar }}" id="avatar">
+            <a href="/space/{{ g.user.uid }}" class="top" style="font-size:25px; padding:10px; align-items: center;">{{ g.user.username }}</a>
+        </div>
+        <div class="sep20"></div>
+        <div class="btn normal">
+            <a href="{{ url_for('main.post_create') }}">发表新主题</a>
+        </div>
+        {% else %}
+        <div class="cell">
+            <p>朋友你好，看起来你是新来的！如果需要参与讨论，请：<p>
+        </div>
+        <a href="/login" class="top" style="font-size:25px; padding-right: 15px; align-items: center;" >登录</a>
+        <a href="/register" class="top" style="font-size:25px; align-items: center;" >注册</a>
+        {% endif %}
+</div>

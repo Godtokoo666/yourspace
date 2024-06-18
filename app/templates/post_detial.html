@@ -1,0 +1,97 @@
+<!-- templates/register.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <div id="leftbar"></div>
+    <div id="rightbar">
+        {% include 'rightbar_user.html' %}
+    </div>
+    <div id="main">
+        <div class="box">
+            <div class="flex-one-row">
+                <h2>{{ post.title }}</span>
+            </div>
+            <div class="cell">
+                <div class= "avatar">
+                    <a href="/space/{{ post.author }}"target="blank">
+                        <img src="{{ post.avatar }}" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" alt={{  g.user.username }}>
+                    </a>
+                </div>
+                <span class="topic_info" style="padding:0 10px">
+                    <strong><a href="/space/{{ post.author }}" target="blank">{{ post.username }}</a></strong>
+                    &nbsp;•&nbsp;
+                    <strong>{{ post.created_at }}</strong>
+                    <br>
+                    <strong>{{ post.views }} 点击</strong>
+                    &nbsp;•&nbsp;
+                    <strong>于 <a href="/node/{{ post.node }}">{{ post.node }}</a></strong>
+                    {% if post.edited %}
+                    &nbsp;•&nbsp;
+                    <strong>编辑于 {{ post.updated_at }}</strong>
+                    {% endif %}
+                    <div class="sep10"></div>
+                </span>
+                {% if post.author==g.user.uid %}
+                <span style="margin-left:auto">
+                    <a href="/post/{{ post.pid }}/edit">编辑</a>
+                </span>
+                {% endif %}
+            </div>
+            <div class="cell" style="border-bottom:none;">
+                <div id="article-Content" data-content="{{ post.content}}"></div>
+            </div>
+        </div>
+        <div class="sep20"></div>
+        <div class="box">
+            {% if comments %}
+                <span>评论</span>
+                <div class="sep20"></div>
+                {% for comment in comments %}
+                    <div class="cell" style="border-bottom:none;">
+                        <div class="avatar">
+                            <a href="/space/{{ comment.author }}" target="blank">
+                                <img src="{{ comment.avatar }}" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" alt={{ comment.username }}>
+                            </a>
+                        </div>
+                        <span class="topic_info" style="padding:0 10px">
+                            <strong><a href="/space/{{ comment.author }}" target="blank">{{ comment.username }}</a></strong>
+                            {% if comment.edited %}
+                            &nbsp;•&nbsp;
+                            <strong>编辑于 {{ comment.updated_at }}</strong>
+                            {% endif %}
+                            <br>
+                            <strong>{{ comment.created_at }}</strong>
+                            <div class="sep10"></div>
+                        </span>
+                        {% if post.author==g.user.uid %}
+                        <span style="margin-left:auto">
+                            <a href="/comment/{{ comment.cid }}/edit">编辑</a>
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="cell" style="display:block;">
+                        <div>{{ comment.content}}</div>
+                        <div class="sep10"></div>
+                    </div>
+                    <div class="sep20"></div>
+                {% endfor %}
+            {% else %}
+                <p>还没有评论，快来抢沙发吧！<p>
+            {% endif %}
+        </div>
+        <div class="sep20"></div>
+        <div class="box">
+            {% if g.user.has_priv('PRIV_USER') %}
+                {% include 'comment.html'%}
+            {% else %}
+            <div class="cell">
+                <p>朋友你好，看起来你是新来的！如果需要参与讨论，请先登录！<p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/md-content.js') }}"></script>
+{% endblock %}

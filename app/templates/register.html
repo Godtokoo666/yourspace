@@ -1,0 +1,36 @@
+<!-- templates/register.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="login-container">
+    <h2>注册</h2>
+    <form method="POST" action="{{ url_for('main.register') }}">
+            {{ form.hidden_tag() }}
+            <label for="username">用户名:</label>
+            {{ form.username }}
+            {% for error in form.username.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+            <label for="email">邮箱:</label>
+
+            {{ form.email }}
+            {% for error in form.email.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+
+            <label for="password">密码:</label>
+            {{ form.password}}
+            {% for error in form.password.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+
+            <label for="confirm_password">重复密码:</label>
+            {{ form.confirm_password }}
+            {% for error in form.confirm_password.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+            {{ form.submit() }}
+    </form>
+</div>
+{% endblock %}
