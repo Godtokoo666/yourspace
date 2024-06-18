@@ -1,0 +1,100 @@
+<!-- templates/register.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <div id="leftbar"></div>
+    <div id="rightbar">
+        {% include 'rightbar_user.html' %}
+    </div>
+    <div id="main">
+        <div class="box">
+            <div>
+                <h2>{{ post.title }}</span>
+            </div>
+            <div class="cell">
+                <div class= "avatar">
+                    <a href="/space/{{ post.author }}"target="blank">
+                        <img src="{{ post.avatar }}" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" alt={{  g.user.username }}>
+                    </a>
+                </div>
+                <span class="topic_info" style="padding:0 10px">
+                    <strong><a href="/space/{{ post.author }}" target="blank">{{ post.username }}</a></strong>
+                    &nbsp;•&nbsp;
+                    <strong>发布于 {{ post.created_at | time_from_now }} 前</strong>
+                    <br>
+                    <strong>{{ post.views }} 点击</strong>
+                    &nbsp;•&nbsp;
+                    <strong>于 <a href="/node/{{ node.url }}">{{ node.name }}</a></strong>
+                    {% if post.edited %}
+                    &nbsp;•&nbsp;
+                    <strong>编辑于 {{ post.updated_at | time_from_now }} 前</strong>
+                    {% endif %}
+                    <div class="sep10"></div>
+                </span>
+                {% if post.author==g.user.uid %}
+                <span style="margin-left:auto">
+                    <a href="/post/{{ post.pid }}/edit">编辑</a>
+                </span>
+                {% endif %}
+            </div>
+            <div id="article-Content">{{ post.content | md_to_html | safe }}</div>
+        </div>
+        <div class="sep20"></div>
+        <div class="box">
+            {% if comments %}
+                <span>评论</span>
+                <div class="sep20"></div>
+                {% for comment in comments %}
+                    <div id="comment{{ loop.index }}"class="cell" style="border-bottom:none;">
+                        <div class="avatar">
+                            <a href="/space/{{ comment.author }}" target="blank">
+                                <img src="{{ comment.avatar }}" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" alt={{ comment.username }}>
+                            </a>
+                        </div>
+                        <span class="topic_info" style="padding:0 10px">
+                            <strong><a href="/space/{{ comment.author }}" target="blank">{{ comment.username }}</a></strong>
+                            {% if comment.edited %}
+                            &nbsp;•&nbsp;
+                            <strong>编辑于 {{ comment.updated_at | time_from_now }} 前</strong>
+                            {% endif %}
+                            <br>
+                            <strong>发布于 {{ comment.created_at | time_from_now }} 前</strong>
+                            &nbsp;•&nbsp;
+                            <strong><a href="#comment{{loop.index}}" >{{loop.index}} 楼</a></strong>
+                            <div class="sep10"></div>
+                        </span>
+                        {% if comment.author==g.user.uid %}
+                        <span style="margin-left:auto">
+                            <a href="/comment/{{ comment.cid }}/edit">编辑</a>
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="cell" style="display:block;">
+                        <div>{{ comment.content | md_to_html | safe}}</div>
+                        <div class="sep10"></div>
+                    </div>
+                    <div class="sep20"></div>
+                {% endfor %}
+            {% else %}
+                <p>还没有评论，快来抢沙发吧！<p>
+            {% endif %}
+        </div>
+        <div class="sep20"></div>
+        <div class="box">
+            {% if g.user.check_ban_status('BANNED_COMMENT') %}
+                <div class="cell">
+                    <p>您已被禁言，无法发表评论！<p>
+                </div>
+            {% elif g.user.has_priv('PRIV_USER') %}
+                {% include 'comment.html'%}
+            {% else %}
+            <div class="cell">
+                <p>朋友你好，看起来你是新来的！如果需要参与讨论，请先登录！<p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

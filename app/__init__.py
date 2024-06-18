@@ -13,9 +13,9 @@ def create_app():
     
     db.init_app(app)
     # Register routes
-    from .routes import main as main_blueprint
+    from app.routes import main as main_blueprint
     app.register_blueprint(main_blueprint)
-        
+    
     @app.before_request
     def before_request():
         g.site_name=app.config['SITE_NAME']

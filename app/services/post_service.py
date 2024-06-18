@@ -1,4 +1,4 @@
-from ..models import db, Post, User, Comment
+from app.models import db, Post, User, Node
 from flask import request
 from datetime import datetime
 
@@ -75,6 +75,8 @@ class PostService:
         post.author = author
         post.node = node
         db.session.add(post)
+        n = Node.query.filter_by(nid=node).first()
+        n.post_count += 1
         db.session.commit()
         return post
     
@@ -97,49 +99,25 @@ class PostService:
         return post
     
     @classmethod
+    def update_by_admin(cls, pid, **kwargs):
+        post = Post.query.filter_by(pid=pid).first()
+        if post:
+            if 'node' in kwargs:
+                post.node = kwargs['node']
+            if 'access_level' in kwargs:
+                post.access_level = kwargs['access_level']
+            if 'topped' in kwargs:
+                post.topped = kwargs['topped']
+            if 'readonly' in kwargs:
+                post.readonly = kwargs['readonly']
+            if 'sort' in kwargs:
+                post.sort = kwargs['sort']
+            db.session.commit()
+        return post
+    @classmethod
     def delete_post(cls, pid):
         post = Post.query.filter_by(pid=pid).first()
         db.session.delete(post)
         db.session.commit()
         return post
-    
-    @classmethod
-    def get_comments(cls, pid):
-        comments_query = db.session.query(
-            Comment.cid,
-            Comment.content,
-            Comment.author,
-            Comment.post,
-            Comment.edited,
-            Comment.created_at,
-            Comment.updated_at,
-            User.username,
-            User.avatar
-            ).join(User, Comment.author == User.uid)
-        comments = comments_query.filter(Comment.post == pid).all()     
-        return comments
-    
-    @classmethod
-    def get_comment(cls, cid):
-        comment=Comment.query.filter_by(cid=cid).first()
-        return comment
-    
-    @classmethod
-    def add_comment(cls, content, author, post):
-        comment = Comment()
-        comment.content = content
-        comment.author = author
-        comment.post = post
-        db.session.add(comment)
-        db.session.commit()
-        return comment
-    
-    @classmethod
-    def update_comment(cls, cid, content):
-        comment = Comment.query.filter_by(cid=cid).first()
-        comment.content = content
-        comment.edited = True
-        comment.updated_at = datetime.now()
-        db.session.commit()
-        return comment
     

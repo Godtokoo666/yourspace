@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ title }} - {{ g.site_name }}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/code.css') }}">
     <script src="{{ url_for('static', filename='js/markdown-it.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block extra_head %}{% endblock %}
@@ -14,7 +15,7 @@
         <div class="content">
             <div class="Top-left">
                 <a href="/" name="top" title="YourSpace">
-                    <div id="Logo">YourSpace</div>
+                    <div id="Logo">{{ g.site_name }}</div>
                 </a>
                 <div id="search-container" class="active">
                     <input id="search" type="text" maxlength="128" autocomplete="off" tabindex="1">
@@ -30,6 +31,9 @@
                             <a href="/space/{{ g.user.uid }}"target="blank">个人空间</a>
                             {% if g.user.has_priv('PRIV_ADMIN')%}
                             <a href="/admin">管理后台</a>
+                            {% endif %}
+                            {% if g.user.has_priv('PRIV_SUPER')%}
+                            <a href="/dashboard">站点管理</a>
                             {% endif %}
                             <a href="/logout">退出登录</a>
                         </div>
@@ -50,9 +54,11 @@
     </div>
     <div id="Bottom">
         <footer class="footer">
-            <p style="text-align: center">&copy; {{ g.current_year }} YourSpace. All rights reserved.</p>
+            <p style="text-align: center">&copy; {{ g.current_year }} {{ g.site_name }}. All rights reserved.</p>
         </footer>
     </div>
+    <a href="#Top" class="scroll-to-top">▲</a>
+    <a href="#Bottom" class="scroll-to-bottom">▼</a>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script>console.log("加入我们：github.com/your-space")</script>
     {% block extra_scripts %}{% endblock %}

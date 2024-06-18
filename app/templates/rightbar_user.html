@@ -5,9 +5,11 @@
             <a href="/space/{{ g.user.uid }}" class="top" style="font-size:25px; padding:10px; align-items: center;">{{ g.user.username }}</a>
         </div>
         <div class="sep20"></div>
-        <div class="btn normal">
-            <a href="{{ url_for('main.post_create') }}">发表新主题</a>
-        </div>
+        {% if not g.user.check_ban_status('BANNED_POST')%}
+            <div class="btn normal">
+                <a href="{{ url_for('main.post_create') }}">发表新主题</a>
+            </div>
+        {% endif %}
         {% else %}
         <div class="cell">
             <p>朋友你好，看起来你是新来的！如果需要参与讨论，请：<p>

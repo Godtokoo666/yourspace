@@ -1,4 +1,4 @@
-from ..models import db, Group
+from app.models import db, Group
 
 class GroupService:
     

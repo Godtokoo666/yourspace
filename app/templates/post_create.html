@@ -37,11 +37,13 @@
                     </div>
                 </div>
                 <div class="sep20"></div>
-                <label for="node">节点:</label>
-                <div class="sep10"></div>
-                <div class="cell">
-                    {{ form.node(tabindex="3", rows="1", maxlength="120", id="node-select") }}
+                <div style="display:flex;flex-direction:row;align-items: center;">
+                    <label style="width:8%;font-size:20px"for="node">节点:</label>
+                    <div style="border-bottom:none;">
+                        {{ form.node(maxlength="120", id="node-select") }}
+                    </div>
                 </div>
+                <div class="sep20"></div>
                 <div class="cell"  style="padding: 10px; padding-left: 0;">
                     <input type="submit" value="发布主题" >
                 </div>

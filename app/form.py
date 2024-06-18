@@ -1,8 +1,9 @@
 #app/form.py
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Regexp
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField, SelectField,IntegerField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Regexp, Optional,NumberRange
 from app.models import User
+
 
 
 class RegistrationForm(FlaskForm):
@@ -23,14 +24,14 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('邮箱已存在！')
         
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Content', validators=[DataRequired()])
-    node = StringField('Node', validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired(),Length(min=5, max=15)])
+    content = TextAreaField('Content', validators=[DataRequired(),Length(max=2000)])
+    node = SelectField('Node',choices=[],coerce=int,validators=[DataRequired()])
     submit = SubmitField('Post')
     
 class CommentForm(FlaskForm):
-    cid = StringField('Cid')
-    content = TextAreaField('Content', validators=[DataRequired()])
+    cid = IntegerField('Cid',validators=[Optional()])
+    content = TextAreaField('Content', validators=[DataRequired(),Length(max=200)])
     submit = SubmitField('Comment')
     
     
@@ -41,3 +42,41 @@ class SpaceForm(FlaskForm):
     avatar = StringField('Avatar')
     bio = TextAreaField('Bio')
     submit = SubmitField('Update')
+
+class AdminUserForm(FlaskForm):
+    uid = StringField('Uid', validators=[DataRequired()])
+    level= IntegerField('Level',validators=[Optional(),NumberRange(min=0,max=5)])
+    priv = IntegerField('Priv',validators=[Optional(),NumberRange(min=1,max=3)])
+    banned_status = IntegerField('Banned Status',validators=[Optional(),NumberRange(min=0,max=5)])
+    submit = SubmitField('Update')
+
+class AdminNodeForm(FlaskForm):
+    
+    nid = IntegerField('Nid', validators=[Optional()])
+    name = StringField('Name',validators=[Optional()])
+    description = StringField('Description',validators=[Optional()])
+    url= StringField('Url',validators=[Optional()])
+    access_level = IntegerField('Access Level',validators=[Optional(),NumberRange(min=0,max=5)])
+    avatar = StringField('Avatar',validators=[Optional()])
+    parent = IntegerField('Parent',validators=[Optional()])
+    submit = SubmitField('Update')
+    
+class AdminPostForm(FlaskForm):
+    pid= StringField('Pid', validators=[DataRequired()])
+    node=IntegerField('Node',validators=[Optional()])
+    access_level = IntegerField('Access Level',validators=[Optional(),NumberRange(min=0,max=5)])
+    topped = BooleanField('Topped',default=False)
+    readonly = BooleanField('Readonly',default=False)
+    sort = IntegerField('Sort',validators=[Optional()])
+    submit = SubmitField('Update')
+    
+class dashboardForm(FlaskForm):
+    site_name = StringField('Site Name')
+    logo = StringField('Logo')
+    base_url = StringField('Base Url')
+    background_url = StringField('Background')
+    site_closed = BooleanField('Site Closed')
+    register_open = BooleanField('Register Open')
+    submit = SubmitField('Dashboard')
+
+    

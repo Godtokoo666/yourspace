@@ -1,5 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>/node</h1>
+<div class="content">
+    <div id="leftbar"></div>
+    <div id="rightbar">
+        {% include 'rightbar_user.html' %}
+    </div>
+    <div id="main">
+        <div class="box">
+            <div class="cell" style="display:flex;flex-direction:row;">
+                <div style="width:20%;display:flex-direction:column;padding:10px 10px">
+                    <h1>节</h1>
+                    <h1>点</h1>
+                </div>
+                <p>{{ g.site_name }}当前共有 <strong>{{ nodes|length }}</strong> 个节点<br>{{g.site_name}}使用节点（Node）来对内容进行归类。每个主题只会属于一个节点，而不支持一个主题具有 N 个节点的设定，这样是为了简洁和容易理解。比如，一个关于 Coder Server 的讨论，会属于 Visual Studio Code 节点。</p>
+            </div>
+        </div>
+        <div class="sep20"></div>
+        <div class="box">
+            {% for node in nodes %}
+            <div class="cell item" id="node{{ node.nid }}">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tbody>
+                        <tr>
+                            <td width="48" valign="top" align="center">
+                                <a href="/node/{{ node.url }}"target="blank">
+                                    <img src="{{ node.avatar}}" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" >
+                                </a>
+                            </td>
+                            <td width="10"></td>
+                            <td width="auto" valign="middle">
+                                <span class="item_title">
+                                    <a href="/node/{{ node.url }}" class="node">{{ node.name }}</a>
+                                </span>
+                                <div class="sep5"></div>
+                                <span class="topic_info"> 
+                                    <sapn><strong>{{ node.description }}</strong></span>
+                                </sapn>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="sep10"></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}

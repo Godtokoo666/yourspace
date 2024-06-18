@@ -1,26 +1,41 @@
 # app/routes.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, g
+import markdown
 from app.services.user_service import UserService
 from app.services.post_service import PostService
-from .form import RegistrationForm, PostForm, CommentForm, confirmForm, SpaceForm
+from app.services.comment_service import CommentService
+from app.services.node_service import NodeService
+from app.form import RegistrationForm, PostForm, CommentForm, confirmForm, SpaceForm, AdminUserForm, AdminNodeForm, AdminPostForm
 
 main = Blueprint('main', __name__)
 
+@main.app_template_filter('time_from_now')
+def time_from_now(time):
+    from datetime import datetime
+    from babel.dates import format_timedelta
+    return format_timedelta(datetime.now()-time, locale='zh_CN')
+
+@main.app_template_filter('md_to_html')
+def md_to_html(md):
+    return markdown.markdown(md, extensions=['markdown.extensions.extra', 'markdown.extensions.codehilite','markdown.extensions.tables','markdown.extensions.toc'])
+
 @main.route('/')
 def index():
+    nodes=NodeService.get_multi()
     pagination=PostService.get_multi_by_create(1)
     posts=pagination.items
-    return render_template('index.html',title='首页',posts=posts,pagination=pagination)
+    return render_template('index.html',title='首页',posts=posts,pagination=pagination,nodes=nodes)
 
 @main.route('/page-<int:page>')
 def index_page(page):
+    nodes=NodeService.get_multi()
     pagination=PostService.get_multi_by_create(page)
     if page>pagination.pages:
         return index_page(pagination.pages)
     elif page<1:
         return index_page(1)
     posts=pagination.items
-    return render_template('index.html',title='首页',posts=posts,pagination=pagination)
+    return render_template('index.html',title='首页',posts=posts,pagination=pagination,nodes=nodes)
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
@@ -47,19 +62,19 @@ def logout():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        UserService.add_user(form.username.data, form.password.data, form.email.data, 1, 1)
+        UserService.add_user(form.username.data, form.password.data, form.email.data, 2, 1)
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('main.login'))
     return render_template('register.html', title='注册',form=form)
 
 @main.route('/space/<int:uid>')
 def space(uid):
-    space=UserService.get_one(uid)    
+    space=UserService.get_one(uid)
     return render_template('space.html', title='个人空间', space=space)
 
 @main.route('/space/<int:uid>/setting', methods=['GET', 'POST'])
 def space_setting(uid):
-    if g.user.uid != uid:
+    if g.user.uid != uid or g.user.check_ban_status('BANNED_SETTING'):
         return render_template('401.html', title='无权访问')
     user=UserService.get_one(uid)
     form=SpaceForm(obj=user)
@@ -69,35 +84,29 @@ def space_setting(uid):
             return redirect(url_for('main.space', uid=uid))
     return render_template('space_setting.html', title='设置', form=form)
 
-
-@main.route('/node')
-def node():
-    if g.user.has_priv('PRIV_USER'):
-        return render_template('node.html', title='节点')
-    else:
-        return redirect(url_for('main.login'))
-
 @main.route('/post/<int:pid>', methods=['GET', 'POST'])
 def post_detial(pid):
     post = PostService.get_one(pid)
-    if g.user.level < post.access_level:
-        render_template('401.html', title='无权访问')
+    node = NodeService.get_one(post.node)
+    if g.user.level < post.access_level or g.user.check_ban_status('BANNED_ALL'):
+        return render_template('401.html', title='无权访问')
     form= CommentForm()
     PostService.add_views(pid)
-    comments=PostService.get_comments(pid)
+    comments=CommentService.get_comments(pid)
     title = post.title
     if request.method == 'POST':
         if form.validate_on_submit():
-            PostService.add_comment( form.content.data, g.user.uid, pid)
+            CommentService.add_comment( form.content.data, g.user.uid, pid)
             return redirect(url_for('main.post_detial', pid=pid))
-        print(comments)
-    return render_template('post_detial.html', title=title, post=post, comments=comments, form=form)
+    return render_template('post_detail.html', title=title, post=post, comments=comments, node=node, form=form)
 
 @main.route('/post/create', methods=['GET', 'POST'])
 def post_create():
-    if not g.user.has_priv('PRIV_USER'):
+    if not g.user.has_priv('PRIV_USER') or g.user.check_ban_status('BANNED_POST'):
         return redirect(url_for('main.login'))
     form = PostForm()
+    nodes=NodeService.get_multi()
+    form.node.choices = [(n.nid, n.name) for n in nodes]
     if form.validate_on_submit():
         user_id = g.user.uid
         post=PostService.add_post(form.title.data, form.content.data, user_id, form.node.data)
@@ -108,9 +117,11 @@ def post_create():
 @main.route('/post/<int:pid>/edit', methods=['GET', 'POST'])
 def post_edit(pid):
     post=PostService.get_one(pid)
-    if g.user.uid != post.author and not g.user.has_priv('PRIV_ADMIN'):
+    if g.user.uid != post.author or not g.user.has_priv('PRIV_ADMIN') or g.user.check_ban_status('BANNED_POST'):
         return render_template('401.html', title='无权访问')
     form = PostForm(obj=post)
+    nodes=NodeService.get_multi()
+    form.node.choices = [(n.nid, n.name) for n in nodes]
     if request.method == 'POST':
         if form.validate_on_submit():
             PostService.update_post(pid, form.title.data, form.content.data, form.node.data)
@@ -132,24 +143,115 @@ def post_delete(pid):
 
 @main.route('/comment/<int:cid>/edit', methods=['GET', 'POST'])
 def comment_edit(cid):
-    comment=PostService.get_comment(cid)
-    if g.user.uid != comment.author and not g.user.has_priv('PRIV_ADMIN'):
+    comment=CommentService.get_comment(cid)
+    if g.user.uid != comment.author or not g.user.has_priv('PRIV_ADMIN') or g.user.check_ban_status('BANNED_COMMENT'):
         return render_template('401.html', title='无权访问')
     form = CommentForm(obj=comment)
     if request.method == 'POST':
         if form.validate_on_submit():
-            PostService.update_comment(cid, form.content.data)
+            CommentService.update_comment(cid, form.content.data)
             return redirect(url_for('main.post_detial', pid=comment.post))
     return render_template('comment_edit.html', title='编辑评论', form=form,comment=comment)
 
-@main.route('/node/<string:node>')
-def node_detail():
-    
-    return render_template('node.html', title='节点讨论')
+@main.route('/node')
+def node():
+    nodes=NodeService.get_multi()
+    return render_template('node.html', title='节点',nodes=nodes)
 
-@main.route('/admin')
+@main.route('/node/<string:url>')
+def node_detail(url):
+    node=NodeService.get_by_url(url)
+    pagination=PostService.get_multi_by_create(1,node.nid)
+    posts=pagination.items
+    return render_template('node_detail.html', title=node.name, node=node, posts=posts,pagination=pagination)
+
+@main.route('/node/<string:url>/page-<int:page>')
+def node_detail_page(url,page):
+    node=NodeService.get_by_url(url)
+    pagination=PostService.get_multi_by_create(page,node.nid)
+    if page>pagination.pages:
+        return index_page(pagination.pages)
+    elif page<1:
+        return index_page(1)
+    posts=pagination.items
+    return render_template('node_detail.html', title=node.name, node=node, posts=posts,pagination=pagination)
+@main.route('/admin',methods=['GET', 'POST'])
 def admin():
-    return render_template('admin.html', title='管理后台')
+    if not g.user.has_priv('PRIV_ADMIN'):
+        return render_template('401.html', title='无权访问')
+    userform = AdminUserForm()
+    nodeform = AdminNodeForm()
+    postform = AdminPostForm()
+    if request.method == 'POST':
+        if userform.submit.data and userform.validate_on_submit():
+            uids=userform.uid.data.split(' ')
+            dic={}
+            if userform.level.data!=None:
+                dic['level']=userform.level.data
+            if userform.priv.data!=None:
+                dic['priv']=userform.priv.data
+            if userform.banned_status.data!=None:
+                dic['banned']=userform.banned_status.data
+            for uid in uids:
+                if not UserService.get_one(uid):
+                    flash('UID'+uid+'不存在', 'user')
+                    return redirect(url_for('main.admin')+'#user_control')
+                UserService.update_user(uid=uid, **dic)
+            flash('提交成功', 'user')
+            return redirect(url_for('main.admin')+'#user_control')
+        if postform.submit.data and postform.validate_on_submit():
+            pids=postform.pid.data.split(' ')
+            dic={}
+            if postform.node.data!=None:
+                if not NodeService.get_one(postform.node.data):
+                    flash('NID'+str(postform.node.data)+'不存在', 'post')
+                    return redirect(url_for('main.admin')+'#post_control')
+                dic['node']=postform.node.data
+            if postform.access_level.data!=None:
+                dic['access_level']=postform.access_level.data
+            if postform.sort.data!=None:
+                dic['sort']=postform.sort.data
+            dic['topped']=postform.topped.data
+            dic['readonly']=postform.readonly.data
+            for pid in pids:
+                if not PostService.get_one(pid):
+                    flash('PID'+pid+'不存在', 'post')
+                    return redirect(url_for('main.admin')+'#post_control')
+                PostService.update_by_admin(pid=pid, **dic)
+            flash('提交成功', 'post')
+            return redirect(url_for('main.admin')+'#post_control')
+        if nodeform.submit.data and nodeform.validate_on_submit():
+            nid=nodeform.nid.data
+            if nid :
+                dic={}
+                if nodeform.name.data:
+                    dic['name']=nodeform.name.data
+                if nodeform.description.data:
+                    dic['description']=nodeform.description.data
+                if nodeform.access_level.data!=None:
+                    dic['access_level']=nodeform.access_level.data
+                if nodeform.parent.data:
+                    if not NodeService.get_one(nodeform.parent.data):
+                        flash('父节点NID'+str(nodeform.parent.data)+'不存在', 'node')
+                        return redirect(url_for('main.admin')+'#node_control')
+                    dic['parent']=nodeform.parent.data
+                if not NodeService.get_one(nid):
+                    flash('NID'+str(nid)+'不存在', 'node')
+                    return redirect(url_for('main.admin')+'#node_control')
+                NodeService.update_node(nid=nid, **dic)
+                flash('节点更新成功', 'node')
+                return redirect(url_for('main.admin')+'#node_control')
+            else:
+                if nodeform.parent.data == None or not nodeform.name.data or not nodeform.description.data or nodeform.access_level.data == None:
+                    flash('添加失败，请填写完整信息', 'node')
+                    return redirect(url_for('main.admin')+'#node_control')
+                if not NodeService.get_one(nodeform.parent.data):
+                    flash('父节点NID'+str(nodeform.parent.data)+'不存在', 'node')
+                    return redirect(url_for('main.admin')+'#node_control')
+                NodeService.add_node(nodeform.name.data, nodeform.description.data, nodeform.parent.data, nodeform.access_level.data)
+                flash('节点添加成功', 'node')
+                return redirect(url_for('main.admin')+'#node_control')
+    return render_template('admin.html', title='管理后台', userform=userform, nodeform=nodeform, postform=postform)
 
 
 

@@ -6,7 +6,7 @@
         <div class="box">
             <div class="cell flex-one-row">
                 <h2>{{ space.username }} 的个人空间</h2>
-                {% if g.user and g.user.uid == space.uid %}
+                {% if g.user and g.user.uid == space.uid and not g.user.check_ban_status("BANNED_SETTING") %}
                     <span style="margin-left:auto">
                         <a href="/space/{{ space.uid }}/setting">空间设置</a>
                     </span>

@@ -208,8 +208,95 @@ a.topic-link:active, a.topic-link:link {
     word-break: break-word;
 }
 
+a.topic-link:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+}
+a.node:active, a.node:link {
+    color: #000;
+    text-decoration: none;
+    word-break: break-word;
+}
+a.node:hover {
+    color: #000;
+    text-decoration: underline;
+}
+a.node:visited {
+    color: #000;
+    text-decoration: none;
+}
+.node-item {
+    font-size: 12px;
+    margin-left: 4px;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+.node-use
+{
+    background: #fbfbfb;
+    border: none;
+    border-radius: 2px;
+    bottom: 8px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, .5);
+    color: unset;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 4px;
+    right: 13px;
+}
 
+.scroll-to {
+    background-color: #fff;
+    border-radius: 12px;
+}
 
+.scroll-to-top {
+    position: fixed;
+    bottom: 160px;
+    right: 30px;
+    z-index: 1000;
+    width: 40px;
+    height: 40px;
+    color: #000;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    text-align: center; 
+    line-height: 40px; 
+    font-size: 35px;
+}
+.scroll-to-top:hover {
+    color: #000;
+}
+
+.scroll-to-top a {
+    color: #000;
+    text-decoration: none;
+}
+
+.scroll-to-bottom {
+    position: fixed;
+    bottom: 120px;
+    right: 30px;
+    z-index: 1000;
+    width: 40px;
+    height: 40px;
+    color: #000;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    text-align: center; 
+    line-height: 40px; 
+    font-size: 35px;
+}
+.scroll-to-bottom:hover {
+    color: #000;
+}
+
+.scroll-to-bottom a {
+    color: #000;
+    text-decoration: none;
+}
 
 .dropdown {
     position: relative;
@@ -264,6 +351,7 @@ a.topic-link:active, a.topic-link:link {
 #Wrapper {
     padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
     background-color: #e2e2e2;
+    background-image: url();
     background-repeat: repeat-x;
     min-height: 100vh; /* 视窗高度 */
 }
@@ -422,6 +510,20 @@ img.avatar {
     overflow: hidden;
     overflow-wrap: break-word; 
     height: 36px;
+}
+
+.input-normal {
+    width: 100%;
+    border: 1px solid #dacfcf;
+    resize: none;
+    outline: 0;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 10px;
+    font-family: "Helvetica Neue", "Hiragino Sans GB", "Microsoft Yahei", sans-serif, "Apple Logo";
+    margin: 0;
+    box-sizing: border-box;
+    display: block;
 }
 
 .sep20 {

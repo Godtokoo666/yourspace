@@ -1,4 +1,4 @@
-from ..models import db, User
+from app.models import db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class UserService:
@@ -52,6 +52,10 @@ class UserService:
                 user.email = kwargs['email']
             if 'priv' in kwargs:
                 user.priv = kwargs['priv']
+            if 'level' in kwargs:
+                user.level = kwargs['level']
+            if 'banned' in kwargs:
+                user.banned = kwargs['banned']
             db.session.commit()
         return user
     
@@ -71,4 +75,4 @@ class UserService:
     @classmethod
     def has_priv(cls,uid,priv):
         user=User.query.filter_by(uid=uid).first()
-        return user.priv & user.priv == priv
+        return user.priv >= priv
