@@ -33,7 +33,7 @@
                     {% endif %}
                     <div class="sep10"></div>
                 </span>
-                {% if post.author==g.user.uid %}
+                {% if post.author==g.user.uid or g.user.has_priv('PRIV_ADMIN')%}
                 <span style="margin-left:auto">
                     <a href="/post/{{ post.pid }}/edit">编辑</a>
                 </span>
@@ -65,7 +65,7 @@
                             <strong><a href="#comment{{loop.index}}" >{{loop.index}} 楼</a></strong>
                             <div class="sep10"></div>
                         </span>
-                        {% if comment.author==g.user.uid %}
+                        {% if comment.author==g.user.uid or g.user.has_priv('PRIV_ADMIN') %}
                         <span style="margin-left:auto">
                             <a href="/comment/{{ comment.cid }}/edit">编辑</a>
                         </span>

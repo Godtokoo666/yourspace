@@ -18,12 +18,14 @@ class NodeService:
         return Node.query.filter_by(url=url).first()
     
     @classmethod
-    def add_node(cls, name, description, parent, access_level):
+    def add_node(cls, name, description,url,avatar,access_level,parent):
         node = Node()
         node.name = name
         node.description = description
-        node.parent = parent
+        node.url = url
+        node.avatar=avatar
         node.access_level = access_level
+        node.parent = parent
         db.session.add(node)
         db.session.commit()
         return node
@@ -36,10 +38,14 @@ class NodeService:
                 node.name = kwargs['name']
             if 'description' in kwargs:
                 node.description = kwargs['description']
-            if 'parent' in kwargs:
-                node.parent = kwargs['parent']
+            if 'url' in kwargs:
+                node.url = kwargs['url']
+            if 'avatar' in kwargs:
+                node.avatar = kwargs['avatar']
             if 'access_level' in kwargs:
                 node.access_level = kwargs['access_level']
+            if 'parent' in kwargs:
+                node.parent = kwargs['parent']
             db.session.commit()
         return node
     

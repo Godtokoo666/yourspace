@@ -24,7 +24,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('邮箱已存在！')
         
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(),Length(min=5, max=15)])
+    title = StringField('Title', validators=[DataRequired(),Length(min=5, max=50)])
     content = TextAreaField('Content', validators=[DataRequired(),Length(max=2000)])
     node = SelectField('Node',choices=[],coerce=int,validators=[DataRequired()])
     submit = SubmitField('Post')
