@@ -1,20 +1,22 @@
 # app/__init__.py
 from flask import Flask, g, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from app.config import load_config
 from datetime import datetime
 import secrets
 
 db=SQLAlchemy()
 from .models import User
+
 def create_app():
     app = Flask(__name__)
-
-    # Load configuration
+    migrate=Migrate(app,db)
+    
+    # Load configuration 
     config=load_config()
     app.config.update(config)
     app.secret_key=secrets.token_hex(32)
-    
     db.init_app(app)
     # Register routes
     from app.routes import main as main_blueprint
