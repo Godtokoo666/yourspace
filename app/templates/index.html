@@ -8,86 +8,92 @@
     </div>  
     <div id="main">
         <div class="box">
-            {% for post in posts %}
-            <div class="cell item" id="post{{post.pid}}">
-                <table cellpadding="0" cellspacing="0" border="0" width="100%">
-                    <tbody>
-                        <tr>
-                            <td width="48" valign="top" align="center">
-                                <a href="/space/{{ post.author }}"target="blank">
-                                    <img src="{{ post.avatar}}" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" >
-                                </a>
-                            </td>
-                            <td width="10"></td>
-                            <td width="auto" valign="middle">
-                                <span class="item_title">
-                                    <a href="/post/{{ post.pid }}" class="topic-link">{{ post.title }}</a>
-                                </span>
-                                <div class="sep5"></div>
-                                <span class="topic_info">
-                                    <strong><a href="/space/{{ post.author }}" target="blank">{{ post.username }}</a></strong>
-                                    &nbsp;•&nbsp;
-                                    <strong>{{ post.created_at | time_from_now }}前</strong>
-                                    &nbsp;•&nbsp;
-                                    <strong>{{ post.views }} 点击</strong>
-                                </span>
-                            </td>
-                            <td width="70" valign="middle">
-                                <a href="/node/{{nodes[post.node][1]}}" class="node-item node-use">{{nodes[post.node][0]}}</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            {% if not posts %}
+            <div class="inner">
+                <h3 style="text-align:center;">暂无内容</p>
             </div>
-            <div class="sep10"></div>
-            {% endfor %}
-            <div class="cell ps_container">
-                <table cellpadding="0" cellspacing="0" border="0" width="100%">
-                    <tbody>
-                        <tr>
-                            <td width="80%" align="left">
-                                {% if pagination.it_pages %}
-                                    {% for p in range(1, pagination.it_pages + 1)%}
-                                    {% if p == pagination.page %}
-                                        <a href="{{ url_for('main.index_page', page=p) }}" class="page_current">{{ p }}</a>
+            {% else %}
+                {% for post in posts %}
+                <div class="cell item" id="post{{post.pid}}">
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tbody>
+                            <tr>
+                                <td width="48" valign="top" align="center">
+                                    <a href="/space/{{ post.author }}"target="blank">
+                                        <img src="{{ post.avatar}}" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" >
+                                    </a>
+                                </td>
+                                <td width="10"></td>
+                                <td width="auto" valign="middle">
+                                    <span class="item_title">
+                                        <a href="/post/{{ post.pid }}" class="topic-link">{{ post.title }}</a>
+                                    </span>
+                                    <div class="sep5"></div>
+                                    <span class="topic_info">
+                                        <strong><a href="/space/{{ post.author }}" target="blank">{{ post.username }}</a></strong>
+                                        &nbsp;•&nbsp;
+                                        <strong>{{ post.created_at | time_from_now }}前</strong>
+                                        &nbsp;•&nbsp;
+                                        <strong>{{ post.views }} 点击</strong>
+                                    </span>
+                                </td>
+                                <td width="70" valign="middle">
+                                    <a href="/node/{{nodes[post.node][1]}}" class="node-item node-use">{{nodes[post.node][0]}}</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sep10"></div>
+                {% endfor %}
+                <div class="cell ps_container">
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tbody>
+                            <tr>
+                                <td width="80%" align="left">
+                                    {% if pagination.it_pages %}
+                                        {% for p in range(1, pagination.it_pages + 1)%}
+                                        {% if p == pagination.page %}
+                                            <a href="{{ url_for('main.index_page', page=p) }}" class="page_current">{{ p }}</a>
+                                            &nbsp;
+                                        {% else %}
+                                            <a href="{{ url_for('main.index_page', page=p) }}" class="page_normal">{{ p }}</a>
+                                            &nbsp;
+                                        {% endif %}
+                                        {% endfor %}
+                                        <span style="color:#ccc;">......</span>
+                                        {% if pagination.page == pagination.pages %}
+                                        <a href="{{ url_for('main.index_page', page=pagination.pages) }}" class="page_current">{{ pagination.pages }}</a>
                                         &nbsp;
+                                        {% else %}
+                                        <a href="{{ url_for('main.index_page', page=pagination.pages) }}" class="page_normal">{{ pagination.pages }}</a>
+                                        &nbsp;
+                                        {% endif %}
                                     {% else %}
-                                        <a href="{{ url_for('main.index_page', page=p) }}" class="page_normal">{{ p }}</a>
-                                        &nbsp;
+                                        {% for p in range(1, pagination.pages + 1)%}
+                                        {% if p == pagination.page %}
+                                            <a href="{{ url_for('main.index_page', page=p) }}" class="page_current">{{ p }}</a>
+                                            &nbsp;
+                                        {% else %}
+                                            <a href="{{ url_for('main.index_page', page=p) }}" class="page_normal">{{ p }}</a>
+                                            &nbsp;
+                                        {% endif %}
+                                        {% endfor %}
                                     {% endif %}
-                                    {% endfor %}
-                                    <span style="color:#ccc;">......</span>
-                                    {% if pagination.page == pagination.pages %}
-                                    <a href="{{ url_for('main.index_page', page=pagination.pages) }}" class="page_current">{{ pagination.pages }}</a>
-                                    &nbsp;
-                                    {% else %}
-                                    <a href="{{ url_for('main.index_page', page=pagination.pages) }}" class="page_normal">{{ pagination.pages }}</a>
-                                    &nbsp;
+                                </td>
+                                <td width="20%" align="right">
+                                    {% if pagination.has_prev %}
+                                    <a href="{{ url_for('main.index_page', page=pagination.prev_num) }}">上一页</a>
                                     {% endif %}
-                                {% else %}
-                                    {% for p in range(1, pagination.pages + 1)%}
-                                    {% if p == pagination.page %}
-                                        <a href="{{ url_for('main.index_page', page=p) }}" class="page_current">{{ p }}</a>
-                                        &nbsp;
-                                    {% else %}
-                                        <a href="{{ url_for('main.index_page', page=p) }}" class="page_normal">{{ p }}</a>
-                                        &nbsp;
+                                    {% if pagination.has_next %}
+                                    <a href="{{ url_for('main.index_page', page=pagination.next_num) }}">下一页</a>
                                     {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                            </td>
-                            <td width="20%" align="right">
-                                {% if pagination.has_prev %}
-                                <a href="{{ url_for('main.index_page', page=pagination.prev_num) }}">上一页</a>
-                                {% endif %}
-                                {% if pagination.has_next %}
-                                <a href="{{ url_for('main.index_page', page=pagination.next_num) }}">下一页</a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ title }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/code.css') }}">
+    <script src="{{ url_for('static', filename='js/markdown-it.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div id="Wrapper">
+        <div class="sep20"></div>
+        <div class="content">
+            <div id = "main-full">
+                <div class="box">
+                    <div>
+                        <h2>安装</h2>
+                    </div>
+                    <div class="inner">
+                        <p>欢迎使用本程序，请按照以下步骤进行安装：</p>
+                        <ol>
+                            <li>创建数据库</li>
+                            <li>修改配置文件</li>
+                            <li>初始化数据库</li>
+                            <li>创建管理员账号</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sep20"></div>
+    </div>
+</body>
+</html>

@@ -1,17 +1,13 @@
 # app/routes.py
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, g
+from flask import Blueprint, render_template, request, redirect,abort, url_for, flash, session, g
 import markdown
 from app.services.user_service import UserService
 from app.services.post_service import PostService
 from app.services.comment_service import CommentService
 from app.services.node_service import NodeService
-from app.form import RegistrationForm, PostForm, CommentForm, confirmForm, SpaceForm, AdminUserForm, AdminNodeForm, AdminPostForm
+from app.form import SiteForm, RegistrationForm, PostForm, CommentForm, confirmForm, SpaceForm, AdminUserForm, AdminNodeForm, AdminPostForm
 
 main = Blueprint('main', __name__)
-
-@main.errorhandler(404)
-def page_not_found(error):
-    return render_template('404.html', title='404')
 
 
 @main.app_template_filter('time_from_now')

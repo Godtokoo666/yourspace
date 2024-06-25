@@ -2,7 +2,6 @@ from app import db
 from app.constants import privileges, ban_status
 from datetime import datetime
 
-
 class User(db.Model):
     __tablename__ = 'Users'
     

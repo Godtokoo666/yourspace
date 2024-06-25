@@ -5,6 +5,15 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from app.models import User
 
 
+class SiteForm(FlaskForm):
+    site_name=StringField('Site Name',validators=[DataRequired(),Length(min=2,max=20)])
+    # footer=TextAreaField('Footer',validators=[DataRequired(),Length(min=2,max=200)])
+    superuser=StringField('Superuser',validators=[DataRequired(),Length(min=2,max=20)])
+    superemail=StringField('Superemail',validators=[DataRequired(),Email()])
+    superpassword=PasswordField('Superpassword',validators=[DataRequired(),Length(min=8,max=20)])
+    database_uri=StringField('Database URI',validators=[DataRequired()])
+    submit=SubmitField('Site')
+
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20), Regexp('^[a-zA-Z0-9]*$', message='用户名只能包含字母和数字')])
