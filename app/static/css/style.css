@@ -197,21 +197,28 @@ a:active, a:link, a:visited {
     text-decoration: none;
     word-break: break-word;
 }
+
 a.top:hover {
     color: #99a;
     text-decoration: none;
 }
 
 a.topic-link:active, a.topic-link:link {
-    color: var(--link-color);
+    color: #000;
     text-decoration: none;
     word-break: break-word;
+}
+
+a.topic-link:visited {
+    color: var(--link-color);
+    text-decoration: none;
 }
 
 a.topic-link:hover {
     color: var(--link-hover-color);
     text-decoration: underline;
 }
+
 a.node:active, a.node:link {
     color: #000;
     text-decoration: none;
@@ -226,7 +233,7 @@ a.node:visited {
     text-decoration: none;
 }
 .node-item {
-    font-size: 12px;
+    font-size: 15px;
     margin-left: 4px;
     margin-right: 4px;
     white-space: nowrap;
