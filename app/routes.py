@@ -255,7 +255,7 @@ def admin():
                 if nodeform.parent.data == None or not nodeform.name.data or not nodeform.description.data or nodeform.access_level.data == None:
                     flash('添加失败，请填写完整信息', 'node')
                     return redirect(url_for('main.admin')+'#node_control')
-                if not NodeService.get_one(nodeform.parent.data):
+                if not NodeService.get_one(nodeform.parent.data) and nodeform.parent.data != 0:
                     flash('父节点NID'+str(nodeform.parent.data)+'不存在', 'node')
                     return redirect(url_for('main.admin')+'#node_control')
                 NodeService.add_node(nodeform.name.data, nodeform.description.data, nodeform.url.data, nodeform.avatar.data, nodeform.parent.data, nodeform.access_level.data)

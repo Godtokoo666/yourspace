@@ -1,4 +1,4 @@
 # config.yaml
 
-SITE_NAME: "YouSpace"
+SITE_NAME: "YourSpace"
 SQLALCHEMY_DATABASE_URI: "mysql://root:%T3rFT!Q6m2tqmv7j$EK5WDP@localhost/yourspace"
